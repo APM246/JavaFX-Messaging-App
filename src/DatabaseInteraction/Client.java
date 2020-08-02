@@ -20,15 +20,29 @@ public class Client extends Thread {
                         + "loginTimeout=30;";
         connection = DriverManager.getConnection(connectionUrl);
         scanner = new Scanner(System.in);
+        connection.setAutoCommit(false);
+        connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
     }
 
-    public void sendMessage(String message) throws SQLException {
-        String selectSQL = "SELECT TOP 1 number FROM dbo.Messages ORDER BY number DESC";
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery(selectSQL);
-        resultSet.next();
-        long new_number = resultSet.getLong(1) + 1;
-        PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO dbo.Messages VALUES('" + message + "', " + new_number + ")");
-        preparedStatement.executeUpdate();
+    public void sendMessage(String message) throws Exception {
+        Savepoint save = null;
+
+        try
+        {
+            String selectSQL = "SELECT TOP 1 number FROM dbo.Messages ORDER BY number DESC";
+            Statement statement = connection.createStatement();
+            save = connection.setSavepoint();
+            ResultSet resultSet = statement.executeQuery(selectSQL);
+            resultSet.next();
+            long new_number = resultSet.getLong(1) + 1;
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO dbo.Messages VALUES('" + message + "', " + new_number + ")");
+            preparedStatement.executeUpdate();
+            connection.commit();
+        }
+
+        catch (Exception e)
+        {
+            connection.rollback(save);
+        }
     }
 }
