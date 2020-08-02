@@ -23,8 +23,12 @@ public class Client extends Thread {
     }
 
     public void sendMessage(String message) throws SQLException {
-        long new_time = System.currentTimeMillis();
-        PreparedStatement statement = connection.prepareStatement("INSERT INTO dbo.Messages VALUES('" + message + "', " + new_time + ")");
-        statement.executeUpdate();
+        String selectSQL = "SELECT TOP 1 number FROM dbo.Messages ORDER BY number DESC";
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(selectSQL);
+        resultSet.next();
+        long new_number = resultSet.getLong(1) + 1;
+        PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO dbo.Messages VALUES('" + message + "', " + new_number + ")");
+        preparedStatement.executeUpdate();
     }
 }
