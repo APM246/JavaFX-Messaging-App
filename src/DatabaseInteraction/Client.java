@@ -7,7 +7,6 @@ import java.lang.Thread;
 public class Client extends Thread {
 
     private final Connection connection;
-    private Scanner scanner;
 
     public Client() throws SQLException {
         String connectionUrl =
@@ -19,7 +18,6 @@ public class Client extends Thread {
                         + "trustServerCertificate=false;"
                         + "loginTimeout=30;";
         connection = DriverManager.getConnection(connectionUrl);
-        scanner = new Scanner(System.in);
         connection.setAutoCommit(false);
         connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
     }
