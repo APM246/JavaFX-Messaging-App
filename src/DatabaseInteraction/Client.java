@@ -5,6 +5,7 @@ import java.sql.*;
 public class Client {
 
     private final Connection connection;
+    private String username;
 
     public Client() throws SQLException {
         String connectionUrl =
@@ -18,8 +19,26 @@ public class Client {
         connection = DriverManager.getConnection(connectionUrl);
     }
 
+    public void setUserName(String name)
+    {
+        username = name;
+    }
+
+    public String prependUserName(String message)
+    {
+        if (username == null)
+        {
+            return "Guest: " + message;
+        }
+        else
+        {
+            return username + ": " + message;
+        }
+    }
+
     public void sendMessage(String message) throws Exception {
         long new_number = 0;
+        message = prependUserName(message);
 
         try
         {
@@ -35,7 +54,7 @@ public class Client {
         catch (Exception e)
         {
             new_number += 1;
-            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO dbo.Messages VALUES('" + message + "', " + new_number + ")");
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO dbo.Messages VALUES('" + message  + "', " + new_number + ")");
             preparedStatement.executeUpdate();
         }
     }
