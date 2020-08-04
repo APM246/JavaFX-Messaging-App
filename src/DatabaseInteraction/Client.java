@@ -1,10 +1,8 @@
 package DatabaseInteraction;
 
 import java.sql.*;
-import java.util.Scanner;
-import java.lang.Thread;
 
-public class Client extends Thread {
+public class Client {
 
     private final Connection connection;
 
@@ -19,7 +17,7 @@ public class Client extends Thread {
                         + "loginTimeout=30;";
         connection = DriverManager.getConnection(connectionUrl);
         connection.setAutoCommit(false);
-        connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+        connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
     }
 
     public void sendMessage(String message) throws Exception {
@@ -29,7 +27,6 @@ public class Client extends Thread {
         {
             String selectSQL = "SELECT TOP 1 number FROM dbo.Messages ORDER BY number DESC";
             Statement statement = connection.createStatement();
-            save = connection.setSavepoint();
             ResultSet resultSet = statement.executeQuery(selectSQL);
             resultSet.next();
             long new_number = resultSet.getLong(1) + 1;
@@ -40,7 +37,7 @@ public class Client extends Thread {
 
         catch (Exception e)
         {
-            connection.rollback(save);
+            e.printStackTrace();
         }
     }
 }

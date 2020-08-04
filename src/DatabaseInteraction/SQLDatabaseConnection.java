@@ -58,11 +58,4 @@ public class SQLDatabaseConnection extends Thread {
     public void run() {
         while (true) displayMessage();
     }
-
-    public static void main(String[] args) throws Exception {
-        SQLDatabaseConnection database = new SQLDatabaseConnection(null);
-        database.start();
-        Client client = new Client();
-        client.start();
-    }
 }

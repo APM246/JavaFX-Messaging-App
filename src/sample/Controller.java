@@ -36,9 +36,10 @@ public class Controller {
 
     public void sendMessage() throws Exception
     {
-        client.sendMessage(textbox.getText());
+        String message = textbox.getText();
         textbox.clear();
         textbox.requestFocus();
+        client.sendMessage(message);
     }
 
     public void enterPressed() throws Exception
