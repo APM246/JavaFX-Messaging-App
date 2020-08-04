@@ -7,6 +7,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.awt.*;
+
 public class Main extends Application {
 
     @Override
@@ -14,7 +16,8 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("sample.fxml"));
         Parent root = loader.load();
         primaryStage.setTitle("App");
-        primaryStage.setScene(new Scene(root, 800, 800));
+        Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
+        primaryStage.setScene(new Scene(root, screensize.getWidth()/2, screensize.getHeight()/2));
         primaryStage.show();
 
         primaryStage.setOnCloseRequest(e -> {
