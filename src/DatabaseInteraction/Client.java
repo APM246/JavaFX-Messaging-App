@@ -17,20 +17,21 @@ public class Client {
                         + "loginTimeout=30;";
         connection = DriverManager.getConnection(connectionUrl);
         connection.setAutoCommit(false);
-        connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+        connection.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
     }
 
     public void sendMessage(String message) throws Exception {
         Savepoint save = null;
+        long new_number = 0;
 
         try
         {
-            String selectSQL = "SELECT TOP 1 number FROM dbo.Messages ORDER BY number DESC FOR UPDATE";
-            Statement statement = connection.createStatement( ResultSet.TYPE_SCROLL_INSENSITIVE,
-                    ResultSet.CONCUR_READ_ONLY);
+            String selectSQL = "SELECT TOP 1 number FROM dbo.Messages ORDER BY number DESC";
+            Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(selectSQL);
             resultSet.next();
-            long new_number = resultSet.getLong(1) + 1;
+            new_number = resultSet.getLong(1) + 1;
+            save = connection.setSavepoint();
             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO dbo.Messages VALUES('" + message + "', " + new_number + ")");
             preparedStatement.executeUpdate();
             connection.commit();
@@ -38,7 +39,8 @@ public class Client {
 
         catch (Exception e)
         {
-            e.printStackTrace();
+            new_number += 1;
+            connection.rollback(save);
         }
     }
 }
