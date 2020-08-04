@@ -25,8 +25,9 @@ public class Client {
 
         try
         {
-            String selectSQL = "SELECT TOP 1 number FROM dbo.Messages ORDER BY number DESC";
-            Statement statement = connection.createStatement();
+            String selectSQL = "SELECT TOP 1 number FROM dbo.Messages ORDER BY number DESC FOR UPDATE";
+            Statement statement = connection.createStatement( ResultSet.TYPE_SCROLL_INSENSITIVE,
+                    ResultSet.CONCUR_READ_ONLY);
             ResultSet resultSet = statement.executeQuery(selectSQL);
             resultSet.next();
             long new_number = resultSet.getLong(1) + 1;
