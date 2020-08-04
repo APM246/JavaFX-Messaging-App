@@ -16,8 +16,8 @@ public class Client {
                         + "trustServerCertificate=false;"
                         + "loginTimeout=30;";
         connection = DriverManager.getConnection(connectionUrl);
-        connection.setAutoCommit(false);
-        connection.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
+        //connection.setAutoCommit(false);
+        //connection.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
     }
 
     public void sendMessage(String message) throws Exception {
@@ -31,16 +31,18 @@ public class Client {
             ResultSet resultSet = statement.executeQuery(selectSQL);
             resultSet.next();
             new_number = resultSet.getLong(1) + 1;
-            save = connection.setSavepoint();
+            //save = connection.setSavepoint();
             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO dbo.Messages VALUES('" + message + "', " + new_number + ")");
             preparedStatement.executeUpdate();
-            connection.commit();
+            //connection.commit();
         }
 
         catch (Exception e)
         {
             new_number += 1;
-            connection.rollback(save);
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO dbo.Messages VALUES('" + message + "', " + new_number + ")");
+            preparedStatement.executeUpdate();
+            //connection.rollback(save);
         }
     }
 }
