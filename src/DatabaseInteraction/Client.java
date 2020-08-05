@@ -26,14 +26,8 @@ public class Client {
 
     public String prependUserName(String message)
     {
-        if (username == null)
-        {
-            return "Guest: " + message;
-        }
-        else
-        {
-            return username + ": " + message;
-        }
+        if (username == null) return "Guest: " + message;
+        else return username + ": " + message;
     }
 
     public void sendMessage(String message) throws Exception {

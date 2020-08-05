@@ -10,11 +10,14 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 
 import java.sql.SQLException;
 
 public class Controller {
 
+    @FXML
+    private HBox hbox;
     @FXML
     private TextField textbox;
     @FXML
@@ -44,7 +47,8 @@ public class Controller {
     {
         chat.setWrapText(true);
         button.setStyle("-fx-background-color:dodgerblue");
-        borderPane.setStyle("-fx-border-color:grey");
+        //borderPane.setStyle("-fx-border-color:grey");
+        //hbox.setStyle("-fx-background-color: grey");
     }
 
     public void setUsername()
